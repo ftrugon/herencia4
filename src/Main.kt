@@ -13,15 +13,14 @@ open class Persona(val nombre:String, private var edad: Int){
      *
      * @return Cadena de texto que representa la información de la persona.
      */
-    override fun toString(): String {
-        return "Nombre: $nombre, Edad: $edad"
-    }
+    override fun toString(): String = "Nombre: $nombre, Edad: $edad"
+
 
     /**
      * Celebra el cumpleaños de la persona, incrementando su edad en uno.
      */
     fun celebrarcumple(){
-        edad ++
+        this.edad ++
         println("Felicidades $nombre, has cumplido $edad años")
     }
 
@@ -37,15 +36,18 @@ open class Persona(val nombre:String, private var edad: Int){
  *
  * @constructor Crea una instancia de [Empleado] con el nombre, edad, salario base y porcentaje de impuestos proporcionados.
  */
-open class Empleado(nombre:String, edad: Int, var salariobase: Number, var porcentajeimpuestos: Number = 10.0): Persona(nombre,edad){
+open class Empleado(nombre:String, edad: Int,salariobase: Number, porcentajeimpuestos: Number = 10.0): Persona(nombre,edad){
+
+    val salariobase = salariobase.toDouble()
+    private val porcentajeimpuestos = porcentajeimpuestos.toDouble()
 
     /**
      * Calcula el salario del empleado después de aplicar los impuestos.
      *
      * @return Salario neto del empleado.
      */
-    open fun calcularsalario():Number{
-        return salariobase.toDouble() - (salariobase.toDouble() * (porcentajeimpuestos.toDouble() / 100))
+    open fun calcularsalario():Double{
+        return salariobase - (salariobase * (porcentajeimpuestos / 100))
     }
 
     /**
@@ -77,18 +79,20 @@ open class Empleado(nombre:String, edad: Int, var salariobase: Number, var porce
  *
  * @constructor Crea una instancia de [Gerente] con el nombre, edad, salario base, porcentaje de impuestos, bonus y exención de impuestos proporcionados.
  */
-class Gerente(nombre:String, edad: Int, salariobase: Number, private var bonus:Number, private var exentoimpuestos:Boolean = false, porcentajeimpuestos: Number = 33.99):Empleado(nombre, edad, salariobase, porcentajeimpuestos){
+class Gerente(nombre:String, edad: Int, salariobase: Number, bonus:Number, private var exentoimpuestos:Boolean = false, porcentajeimpuestos: Number = 33.99):Empleado(nombre, edad, salariobase, porcentajeimpuestos){
+
+    private var bonus = bonus.toDouble()
 
     /**
      * Calcula el salario del Gerente, considerando el bonus y la exención de impuestos.
      *
      * @return Salario neto del Gerente.
      */
-    override fun calcularsalario(): Number {
+    override fun calcularsalario(): Double {
         return if (exentoimpuestos){
-            salariobase.toDouble() + bonus.toDouble()
+            salariobase + bonus
         }else{
-            (salariobase.toDouble() - (salariobase.toDouble() * (porcentajeimpuestos.toDouble()/100))) + bonus.toDouble()
+            super.calcularsalario() + bonus
         }
     }
 
@@ -98,7 +102,7 @@ class Gerente(nombre:String, edad: Int, salariobase: Number, private var bonus:N
      * @return Cadena de texto que representa la información del Gerente.
      */
     override fun toString(): String {
-        return "Gerente: ${super.toString()}, Bonus: $bonus"
+        return "Gerente: ${super.toString()}, Bonus: $bonus, Exento a impuestos? $exentoimpuestos"
     }
 
     /**
@@ -131,4 +135,8 @@ fun main() {
     ge1.celebrarcumple()
     ge1.administrar()
     println()
+
+    val ge2: Persona = Gerente("Diego",52,2500,230,false)
+    ge2.celebrarcumple()
+
 }
